@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements DialogInterface.OnClickListener {
     private final static int ACTIVITY_FILE_CHOOSER = 1;
+    private final static int ACTIVITY_FILE_SAVER   = 2;
 
     private EditorControl control = new EditorControl();
 
@@ -59,7 +60,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         } else if (r.getString(R.string.menu_item_save).equals(item)) {
             Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
         } else if (r.getString(R.string.menu_item_save_as).equals(item)) {
-            Toast.makeText(this, "saveas", Toast.LENGTH_SHORT).show();
+            onSaveAs();
         }
     }
 
@@ -70,6 +71,13 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         startActivityForResult(intent, ACTIVITY_FILE_CHOOSER);
     }
 
+    private void onSaveAs() {
+        Intent intent = new Intent(this, FileSaver.class);
+        String path = control.getAbsolutePath();
+        intent.putExtra(FileSaver.ARG_PATH, path);
+        startActivityForResult(intent, ACTIVITY_FILE_SAVER);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode < 0) {
@@ -78,6 +86,9 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         switch (requestCode) {
         case ACTIVITY_FILE_CHOOSER:
             onFileChooserResult(data);
+            break;
+        case ACTIVITY_FILE_SAVER:
+            onFileSaverResult(data);
             break;
         }
     }
@@ -98,6 +109,24 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
             }
             EditText et = (EditText)findViewById(R.id.edit);
             et.setText(text);
+        } catch (IOException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void onFileSaverResult(Intent data) {
+        String path = data.getStringExtra(FileChooser.RESULT_PATH);
+        if (path.isEmpty()) {
+            return;
+        }
+        saveFile(new File(path));
+    }
+
+    private void saveFile(File file) {
+        try {
+            EditText et = (EditText)findViewById(R.id.edit);
+            String text = et.getText().toString();
+            control.saveFile(file, text);
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
