@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         } else if (r.getString(R.string.menu_item_open).equals(item)) {
             onOpen();
         } else if (r.getString(R.string.menu_item_save).equals(item)) {
-            Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
+            onSave();
         } else if (r.getString(R.string.menu_item_save_as).equals(item)) {
             onSaveAs();
         }
@@ -69,6 +69,15 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         String root = Environment.getExternalStorageDirectory().getPath();
         intent.putExtra(FileChooser.ARG_PATH, root);
         startActivityForResult(intent, ACTIVITY_FILE_CHOOSER);
+    }
+
+    private void onSave() {
+        File file = control.getCurrentFile();
+        if (file == null) {
+            onSaveAs();
+            return;
+        }
+        saveFile(file);
     }
 
     private void onSaveAs() {

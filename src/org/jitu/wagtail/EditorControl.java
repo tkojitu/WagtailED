@@ -34,6 +34,10 @@ public class EditorControl {
         return buf.toString();
     }
 
+    public File getCurrentFile() {
+        return currentFile;
+    }
+
     public String getAbsolutePath() {
         if (currentFile == null) {
             return Environment.getExternalStorageDirectory().getAbsolutePath() +
@@ -47,5 +51,6 @@ public class EditorControl {
         BufferedWriter bw = new BufferedWriter(wf);
         bw.write(text, 0, text.length());
         bw.close();
+        currentFile = file;
     }
 }
