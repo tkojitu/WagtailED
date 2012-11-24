@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WagtailED</string>
+    <string name="menu_item_file">File</string>
+    <string name="menu_item_new">New</string>
+    <string name="menu_item_open">Open...</string>
+    <string name="menu_item_save">Save</string>
+    <string name="menu_item_save_as">Save As...</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+</resources>
