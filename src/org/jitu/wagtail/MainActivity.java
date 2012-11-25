@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         String[] items = r.getStringArray(R.array.file_menu_items);
         String item = items[which];
         if (r.getString(R.string.menu_item_new).equals(item)) {
-            Toast.makeText(this, "new", Toast.LENGTH_SHORT).show();
+            onNew();
         } else if (r.getString(R.string.menu_item_open).equals(item)) {
             onOpen();
         } else if (r.getString(R.string.menu_item_save).equals(item)) {
@@ -62,6 +62,12 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         } else if (r.getString(R.string.menu_item_save_as).equals(item)) {
             onSaveAs();
         }
+    }
+
+    private void onNew() {
+        EditText et = (EditText)findViewById(R.id.edit);
+        et.setText("");
+        control.newFile();
     }
 
     private void onOpen() {
@@ -139,5 +145,15 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        File file = control.getCurrentFile();
+        if (file == null) {
+            return;
+        }
+        saveFile(file);
     }
 }

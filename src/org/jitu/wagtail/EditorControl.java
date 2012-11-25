@@ -53,4 +53,8 @@ public class EditorControl {
         bw.close();
         currentFile = file;
     }
+
+    public void newFile() {
+        currentFile = null;
+    }
 }
