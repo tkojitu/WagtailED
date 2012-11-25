@@ -9,9 +9,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.http.util.CharArrayBuffer;
 
+import android.annotation.SuppressLint;
 import android.os.Environment;
 
 public class EditorControl {
@@ -41,9 +44,16 @@ public class EditorControl {
     public String getAbsolutePath() {
         if (currentFile == null) {
             return Environment.getExternalStorageDirectory().getAbsolutePath() +
-                    File.separator + "Untitled.txt";
+                    File.separator + getDefaultName();
         }
         return currentFile.getAbsolutePath();
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private String getDefaultName() {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        String name = fmt.format(new Date());
+        return name + ".txt";
     }
 
     public void saveFile(File file, String text) throws IOException {
