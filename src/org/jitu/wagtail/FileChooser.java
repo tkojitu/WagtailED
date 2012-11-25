@@ -1,15 +1,18 @@
 package org.jitu.wagtail;
 
 import java.io.File;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FileChooser extends Activity implements OnItemClickListener {
     public static final String ARG_PATH = "ARG_PATH";
     public static final String RESULT_PATH = "path";
@@ -21,7 +24,9 @@ public class FileChooser extends Activity implements OnItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (Build.VERSION.SDK_INT > 10) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         setupRoot();
         setTitleDir();
         setupContentView();

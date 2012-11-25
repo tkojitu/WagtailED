@@ -14,8 +14,10 @@
         android:layout_alignParentTop="true"
         android:ems="10"
         android:gravity="top|left"
-        android:inputType="textMultiLine" >
-        <requestFocus />
+        android:inputType="textMultiLine"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical" >
+
     </EditText>
 
 </RelativeLayout>
