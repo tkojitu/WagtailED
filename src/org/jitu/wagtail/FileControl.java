@@ -17,7 +17,7 @@ import org.apache.http.util.CharArrayBuffer;
 import android.annotation.SuppressLint;
 import android.os.Environment;
 
-public class EditorControl {
+public class FileControl {
     private File currentFile;
 
     public String readFile(File file) throws IOException {

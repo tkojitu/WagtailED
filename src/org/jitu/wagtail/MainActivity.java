@@ -14,16 +14,18 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements DialogInterface.OnClickListener {
+public class MainActivity extends Activity {
     private final static int ACTIVITY_FILE_CHOOSER = 1;
     private final static int ACTIVITY_FILE_SAVER   = 2;
 
-    private EditorControl control = new EditorControl();
+    private FileControl fileControl = new FileControl();
+    private EditControl editControl = new EditControl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        editControl.addTextWatcher(getEdit());
     }
 
     @Override
@@ -38,6 +40,9 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         case R.id.menu_file:
             showFileMenu();
             return true;
+        case R.id.menu_edit:
+            showEditMenu();
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -45,11 +50,29 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
 
     private void showFileMenu() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(R.array.file_menu_items, this);
+        builder.setItems(R.array.file_menu_items,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onClickFile(dialog, which);
+                    }
+                });
         builder.create().show();
     }
 
-    public void onClick(DialogInterface dialog, int which) {
+    private void showEditMenu() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(R.array.edit_menu_items,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onClickEdit(dialog, which);
+                    }
+                });
+        builder.create().show();
+    }
+
+    public void onClickFile(DialogInterface dialog, int which) {
         Resources r = getResources();
         String[] items = r.getStringArray(R.array.file_menu_items);
         String item = items[which];
@@ -64,10 +87,30 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
         }
     }
 
+    public void onClickEdit(DialogInterface dialog, int which) {
+        Resources r = getResources();
+        String[] items = r.getStringArray(R.array.edit_menu_items);
+        String item = items[which];
+        if (r.getString(R.string.menu_item_cut).equals(item)) {
+            editControl.cut(this, getEdit());
+        } else if (r.getString(R.string.menu_item_copy).equals(item)) {
+            editControl.copy(this, getEdit());
+        } else if (r.getString(R.string.menu_item_paste).equals(item)) {
+            editControl.paste(this, getEdit());
+        } else if (r.getString(R.string.menu_item_undo).equals(item)) {
+            editControl.undo(getEdit());
+        } else if (r.getString(R.string.menu_item_redo).equals(item)) {
+            editControl.redo(getEdit());
+        }
+    }
+
     private void onNew() {
-        EditText et = (EditText)findViewById(R.id.edit);
-        et.setText("");
-        control.newFile();
+        editControl.clear(getEdit());
+        fileControl.newFile();
+    }
+
+    private EditText getEdit() {
+        return (EditText)findViewById(R.id.edit);
     }
 
     private void onOpen() {
@@ -78,7 +121,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
     }
 
     private void onSave() {
-        File file = control.getCurrentFile();
+        File file = fileControl.getCurrentFile();
         if (file == null) {
             onSaveAs();
             return;
@@ -88,7 +131,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
 
     private void onSaveAs() {
         Intent intent = new Intent(this, FileSaver.class);
-        String path = control.getAbsolutePath();
+        String path = fileControl.getAbsolutePath();
         intent.putExtra(FileSaver.ARG_PATH, path);
         startActivityForResult(intent, ACTIVITY_FILE_SAVER);
     }
@@ -118,12 +161,11 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
 
     private void openFile(File file) {
         try {
-            String text = control.readFile(file);
+            String text = fileControl.readFile(file);
             if (text == null) {
                 return;
             }
-            EditText et = (EditText)findViewById(R.id.edit);
-            et.setText(text);
+            editControl.setText(getEdit(), text);
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -139,9 +181,8 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
 
     private void saveFile(File file) {
         try {
-            EditText et = (EditText)findViewById(R.id.edit);
-            String text = et.getText().toString();
-            control.saveFile(file, text);
+            String text = editControl.getText(getEdit());
+            fileControl.saveFile(file, text);
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -150,7 +191,7 @@ public class MainActivity extends Activity implements DialogInterface.OnClickLis
     @Override
     protected void onPause() {
         super.onPause();
-        File file = control.getCurrentFile();
+        File file = fileControl.getCurrentFile();
         if (file == null) {
             return;
         }
