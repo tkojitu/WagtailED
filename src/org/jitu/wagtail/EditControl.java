@@ -37,6 +37,7 @@ public class EditControl {
 
     public void setText(EditText edit, String text) {
         edit.setText(text);
+        edit.setSelection(text.length());
     }
 
     public String getText(EditText edit) {
