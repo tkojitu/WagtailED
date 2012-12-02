@@ -4,9 +4,9 @@
     <string name="app_name">WagtailED</string>
     <string name="cancel">Cancel</string><string name="menu_item_file">File</string>
     <string name="menu_item_new">New</string>
-    <string name="menu_item_open">Open...</string>
+    <string name="menu_item_open">Open&#8230;</string>
     <string name="menu_item_save">Save</string>
-    <string name="menu_item_save_as">Save As...</string>
+    <string name="menu_item_save_as">Save As&#8230;</string>
     <string name="menu_item_edit">Edit</string>
     <string name="menu_item_copy">Copy</string>
     <string name="menu_item_cut">Cut</string>

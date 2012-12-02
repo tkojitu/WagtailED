@@ -16,7 +16,8 @@
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical" >
+        android:scrollbars="vertical"
+        android:textSize="14sp" >
 
     </EditText>
 
