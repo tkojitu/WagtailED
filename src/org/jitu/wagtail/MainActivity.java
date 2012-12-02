@@ -107,6 +107,7 @@ public class MainActivity extends Activity {
     private void onNew() {
         editControl.clear(getEdit());
         fileControl.newFile();
+        setTitle(R.string.app_name);
     }
 
     private EditText getEdit() {
@@ -166,6 +167,7 @@ public class MainActivity extends Activity {
                 return;
             }
             editControl.setText(getEdit(), text);
+            setTitle(file.getName());
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
