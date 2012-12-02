@@ -2,6 +2,7 @@ package org.jitu.wagtail;
 
 import java.io.File;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
@@ -118,9 +119,19 @@ public class MainActivity extends Activity {
 
     private void onOpen() {
         Intent intent = new Intent(this, FileChooser.class);
-        String root = Environment.getExternalStorageDirectory().getPath();
-        intent.putExtra(FileChooser.ARG_PATH, root);
+        String home = getHomePath();
+        intent.putExtra(FileChooser.ARG_PATH, home);
         startActivityForResult(intent, ACTIVITY_FILE_CHOOSER);
+    }
+
+    private String getHomePath() {
+        File storage = Environment.getExternalStorageDirectory();
+        File home = new File(storage, "notes");
+        if (home.exists()) {
+            return home.getAbsolutePath();
+        } else {
+            return storage.getAbsolutePath();
+        }
     }
 
     private void onSave() {
