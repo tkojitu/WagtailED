@@ -1,7 +1,7 @@
 package org.jitu.wagtail;
 
 import java.io.File;
-import java.io.IOException;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editControl.addTextWatcher(getEdit());
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
@@ -161,16 +163,14 @@ public class MainActivity extends Activity {
     }
 
     private void openFile(File file) {
-        try {
-            String text = fileControl.readFile(file);
-            if (text == null) {
-                return;
-            }
-            editControl.setText(getEdit(), text);
-            setTitle(file.getName());
-        } catch (IOException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        String text = fileControl.readFile(file);
+        if (text == null) {
+            String msg = fileControl.getErrorMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            return;
         }
+        editControl.setText(getEdit(), text);
+        setTitle(file.getName());
     }
 
     private void onFileSaverResult(Intent data) {
@@ -182,11 +182,10 @@ public class MainActivity extends Activity {
     }
 
     private void saveFile(File file) {
-        try {
-            String text = editControl.getText(getEdit());
-            fileControl.saveFile(file, text);
-        } catch (IOException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        String text = editControl.getText(getEdit());
+        if (!fileControl.saveFile(file, text)) {
+            String msg = fileControl.getErrorMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -198,5 +197,30 @@ public class MainActivity extends Activity {
             return;
         }
         saveFile(file);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            onVolumeDown();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void onVolumeDown() {
+        onSave();
+        showSavedFileName();
+    }
+
+    private void showSavedFileName() {
+        File file = fileControl.getCurrentFile();
+        if (file == null) {
+            return;
+        }
+        String msg = "Save " + file.getName();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

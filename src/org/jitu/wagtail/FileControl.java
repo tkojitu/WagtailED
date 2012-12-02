@@ -19,22 +19,29 @@ import android.os.Environment;
 
 public class FileControl {
     private File currentFile;
+    private Exception error;
 
-    public String readFile(File file) throws IOException {
-        URL url = file.toURI().toURL();
-        URLConnection conn = url.openConnection();
-        InputStream is = conn.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        int nread;
-        char[] chunk = new char[8192];
-        CharArrayBuffer buf = new CharArrayBuffer(8192);
-        while ((nread = br.read(chunk, 0, chunk.length)) != -1) {
-            buf.append(chunk, 0, nread);
+    public String readFile(File file) {
+        try {
+            URL url = file.toURI().toURL();
+            URLConnection conn = url.openConnection();
+            InputStream is = conn.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            int nread;
+            char[] chunk = new char[8192];
+            CharArrayBuffer buf = new CharArrayBuffer(8192);
+            while ((nread = br.read(chunk, 0, chunk.length)) != -1) {
+                buf.append(chunk, 0, nread);
+            }
+            br.close();
+            currentFile = file;
+            return buf.toString();
+        } catch (IOException e) {
+            error = e;
+            currentFile = null;
+            return null;
         }
-        br.close();
-        currentFile = file;
-        return buf.toString();
     }
 
     public File getCurrentFile() {
@@ -56,15 +63,28 @@ public class FileControl {
         return name + ".txt";
     }
 
-    public void saveFile(File file, String text) throws IOException {
-        FileWriter wf = new FileWriter(file);
-        BufferedWriter bw = new BufferedWriter(wf);
-        bw.write(text, 0, text.length());
-        bw.close();
-        currentFile = file;
+    public boolean saveFile(File file, String text) {
+        try {
+            FileWriter wf = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(wf);
+            bw.write(text, 0, text.length());
+            bw.close();
+            currentFile = file;
+            return true;
+        } catch (IOException e) {
+            error = e;
+            return false;
+        }
     }
 
     public void newFile() {
         currentFile = null;
+    }
+
+    public String getErrorMessage() {
+        if (error == null) {
+            return "";
+        }
+        return error.getMessage();
     }
 }
