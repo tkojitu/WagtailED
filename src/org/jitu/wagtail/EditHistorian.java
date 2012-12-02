@@ -16,8 +16,15 @@ public class EditHistorian implements TextWatcher {
             return;
         }
         EditEvent event = new EditEvent(start, s.subSequence(start, start + count));
-        undos.addLast(event);
+        addUndo(event);
         clearRedos();
+    }
+
+    private void addUndo(EditEvent event) {
+        undos.addLast(event);
+        if (undos.size() > 100) {
+            undos.removeFirst();
+        }
     }
 
     private void clearRedos() {

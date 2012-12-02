@@ -2,7 +2,6 @@ package org.jitu.wagtail;
 
 import java.io.File;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
