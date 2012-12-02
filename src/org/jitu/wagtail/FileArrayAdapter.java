@@ -30,6 +30,7 @@ public class FileArrayAdapter extends ArrayAdapter<File> {
             files.add(file);
         }
         Collections.sort(files);
+        Collections.reverse(files);
         return files;
     }
 
