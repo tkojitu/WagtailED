@@ -50,10 +50,19 @@ public class FileControl {
 
     public String getAbsolutePath() {
         if (currentFile == null) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath() +
-                    File.separator + getDefaultName();
+            return getHomePath() + File.separator + getDefaultName();
         }
         return currentFile.getAbsolutePath();
+    }
+
+    public String getHomePath() {
+        File storage = Environment.getExternalStorageDirectory();
+        File home = new File(storage, "notes");
+        if (home.exists()) {
+            return home.getAbsolutePath();
+        } else {
+            return storage.getAbsolutePath();
+        }
     }
 
     @SuppressLint("SimpleDateFormat")

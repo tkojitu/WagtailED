@@ -118,19 +118,9 @@ public class MainActivity extends Activity {
 
     private void onOpen() {
         Intent intent = new Intent(this, FileChooser.class);
-        String home = getHomePath();
+        String home = fileControl.getHomePath();
         intent.putExtra(FileChooser.ARG_PATH, home);
         startActivityForResult(intent, ACTIVITY_FILE_CHOOSER);
-    }
-
-    private String getHomePath() {
-        File storage = Environment.getExternalStorageDirectory();
-        File home = new File(storage, "notes");
-        if (home.exists()) {
-            return home.getAbsolutePath();
-        } else {
-            return storage.getAbsolutePath();
-        }
     }
 
     private void onSave() {
