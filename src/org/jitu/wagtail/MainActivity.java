@@ -186,6 +186,7 @@ public class MainActivity extends Activity {
             String msg = fileControl.getErrorMessage();
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
+        setTitle(file.getName());
     }
 
     @Override
