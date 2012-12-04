@@ -15,9 +15,12 @@ import java.util.Date;
 import org.apache.http.util.CharArrayBuffer;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.os.Environment;
 
 public class FileControl {
+    private final static String CURRENT_FILE = "CURRENT_FILE";
+
     private File currentFile;
     private Exception error;
 
@@ -95,5 +98,16 @@ public class FileControl {
             return "";
         }
         return error.getMessage();
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        if (currentFile == null) {
+            return;
+        }
+        outState.putSerializable(CURRENT_FILE, currentFile);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        currentFile = (File)savedInstanceState.getSerializable(CURRENT_FILE);
     }
 }

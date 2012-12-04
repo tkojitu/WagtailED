@@ -223,4 +223,16 @@ public class MainActivity extends Activity {
         String msg = "Save " + file.getName();
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        fileControl.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        fileControl.onRestoreInstanceState(savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }
