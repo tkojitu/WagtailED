@@ -51,6 +51,13 @@ public class FileControl {
         return currentFile;
     }
 
+    public String getCurrentFileName() {
+        if (currentFile == null) {
+            return "";
+        }
+        return currentFile.getName();
+    }
+
     public String getAbsolutePath() {
         if (currentFile == null) {
             return getHomePath() + File.separator + getDefaultName();

@@ -108,7 +108,16 @@ public class MainActivity extends Activity {
     private void onNew() {
         editControl.clear(getEdit());
         fileControl.newFile();
-        setTitle(R.string.app_name);
+        setTitle();
+    }
+
+    private void setTitle() {
+        String title = fileControl.getCurrentFileName();
+        if (title.isEmpty()) {
+            setTitle(R.string.app_name);
+        } else {
+            setTitle(title);
+        }
     }
 
     private EditText getEdit() {
@@ -169,7 +178,7 @@ public class MainActivity extends Activity {
             return;
         }
         editControl.setText(getEdit(), text);
-        setTitle(file.getName());
+        setTitle();
     }
 
     private void onFileSaverResult(Intent data) {
@@ -186,7 +195,7 @@ public class MainActivity extends Activity {
             String msg = fileControl.getErrorMessage();
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
-        setTitle(file.getName());
+        setTitle();
     }
 
     @Override
@@ -233,6 +242,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         fileControl.onRestoreInstanceState(savedInstanceState);
+        setTitle();
         super.onRestoreInstanceState(savedInstanceState);
     }
 }
