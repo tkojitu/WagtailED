@@ -19,7 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 
 public class FileControl {
-    private final static String CURRENT_FILE = "CURRENT_FILE";
+    private static final String CURRENT_FILE = "CURRENT_FILE";
 
     private File currentFile;
     private Exception error;
@@ -115,6 +115,6 @@ public class FileControl {
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        currentFile = (File)savedInstanceState.getSerializable(CURRENT_FILE);
+        currentFile = (File) savedInstanceState.getSerializable(CURRENT_FILE);
     }
 }

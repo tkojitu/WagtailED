@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private final static int ACTIVITY_FILE_CHOOSER = 1;
-    private final static int ACTIVITY_FILE_SAVER   = 2;
+    private static final int ACTIVITY_FILE_CHOOSER = 1;
+    private static final int ACTIVITY_FILE_SAVER   = 2;
 
     private FileControl fileControl = new FileControl();
     private EditControl editControl = new EditControl();
@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
     }
 
     private EditText getEdit() {
-        return (EditText)findViewById(R.id.edit);
+        return (EditText) findViewById(R.id.edit);
     }
 
     private void onOpen() {

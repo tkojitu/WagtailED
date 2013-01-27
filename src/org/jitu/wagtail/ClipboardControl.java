@@ -66,7 +66,7 @@ class ClipboardControlApi11 extends ClipboardControl {
     }
 
     private ClipboardManager getClipboard(Context context) {
-        return (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        return (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     protected void insertClip(Context context, EditText edit) {

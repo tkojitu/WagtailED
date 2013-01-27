@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class FileSaver extends FileChooser implements DialogInterface.OnClickListener {
-    private final static String SAVED_PATH = "SAVED_PATH";
+    private static final String SAVED_PATH = "SAVED_PATH";
 
     private String savedPath = null;
 
@@ -32,14 +32,14 @@ public class FileSaver extends FileChooser implements DialogInterface.OnClickLis
     }
 
     private void setFileEdit() {
-        EditText et = (EditText)findViewById(R.id.file_edit);
+        EditText et = (EditText) findViewById(R.id.file_edit);
         String filename = getArgFile().getName();
         et.setText(filename);
         et.setSelection(et.getText().length());
     }
 
     protected ListView findFileList() {
-        return (ListView)findViewById(R.id.file_list);
+        return (ListView) findViewById(R.id.file_list);
     }
 
     protected FileArrayAdapter newFileArrayAdapter() {
@@ -85,7 +85,7 @@ public class FileSaver extends FileChooser implements DialogInterface.OnClickLis
     }
 
     private String getSavedPath() {
-        EditText et = (EditText)findViewById(R.id.file_edit);
+        EditText et = (EditText) findViewById(R.id.file_edit);
         String text = et.getText().toString();
         return currentDir + File.separator + text;
     }
@@ -121,7 +121,7 @@ public class FileSaver extends FileChooser implements DialogInterface.OnClickLis
         cancel();
     }
 
-    private void onNoReplace() {}
+    private void onNoReplace() { }
 
     private void onYesReplace() {
         String tmp = savedPath;

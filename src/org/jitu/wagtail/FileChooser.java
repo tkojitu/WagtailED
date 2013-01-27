@@ -54,7 +54,7 @@ public class FileChooser extends Activity implements OnItemClickListener {
     }
 
     protected ListView findFileList() {
-        return (ListView)findViewById(R.id.file_chooser_list);
+        return (ListView) findViewById(R.id.file_chooser_list);
     }
 
     protected FileArrayAdapter newFileArrayAdapter() {
@@ -109,7 +109,7 @@ public class FileChooser extends Activity implements OnItemClickListener {
     }
 
     @Override
-    public void onBackPressed () {
+    public void onBackPressed() {
         if (currentDir.equals(root)) {
             cancel();
             return;

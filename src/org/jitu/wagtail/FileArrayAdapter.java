@@ -51,10 +51,10 @@ public class FileArrayAdapter extends ArrayAdapter<File> {
         View cv = convertView;
         if (cv == null) {
             LayoutInflater li =
-                    (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             cv = li.inflate(id, null);
         }
-        TextView tv = (TextView)cv.findViewById(R.id.filename);
+        TextView tv = (TextView) cv.findViewById(R.id.filename);
         if (tv == null) {
             return cv;
         }
