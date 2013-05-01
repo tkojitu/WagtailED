@@ -2,24 +2,35 @@ package org.jitu.wagtail;
 
 import java.io.File;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private static final int ACTIVITY_FILE_CHOOSER = 1;
-    private static final int ACTIVITY_FILE_SAVER   = 2;
+    public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
+    public static final String OI_EXTRA_TITLE = "org.openintents.extra.TITLE";
+    public static final String OI_ACTION_PICK_DIRECTORY = "org.openintents.action.PICK_DIRECTORY";
+    public static final String OI_ACTION_PICK_FILE = "org.openintents.action.PICK_FILE";
+
+    private static final int REQUEST_OI_ACTION_PICK_FILE = 11;
+    private static final int REQUEST_OI_ACTION_PICK_DIRECTORY = 12;
 
     private FileControl fileControl = new FileControl();
     private EditControl editControl = new EditControl();
+
+    private File pickedDirectory = new File(fileControl.getHomePath());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,10 +136,16 @@ public class MainActivity extends Activity {
     }
 
     private void onOpen() {
-        Intent intent = new Intent(this, FileChooser.class);
         String home = fileControl.getHomePath();
-        intent.putExtra(FileChooser.ARG_PATH, home);
-        startActivityForResult(intent, ACTIVITY_FILE_CHOOSER);
+        Intent intent = new Intent(OI_ACTION_PICK_FILE);    
+        intent.setData(Uri.parse("file://" + home));
+        intent.putExtra(OI_EXTRA_TITLE, getString(R.string.oi_open_title));
+        intent.putExtra(OI_EXTRA_BUTTON_TEXT, getString(R.string.oi_open_button));
+        try {
+            startActivityForResult(intent, REQUEST_OI_ACTION_PICK_FILE);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.oi_no_filemanager_installed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onSave() {
@@ -141,52 +158,76 @@ public class MainActivity extends Activity {
     }
 
     private void onSaveAs() {
-        Intent intent = new Intent(this, FileSaver.class);
-        String path = fileControl.getAbsolutePath();
-        intent.putExtra(FileSaver.ARG_PATH, path);
-        startActivityForResult(intent, ACTIVITY_FILE_SAVER);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                EditText edit = (EditText) ((AlertDialog) dialog).findViewById(R.id.filename);
+                String filename = edit.getText().toString();
+                onFileSaveDialogOk(filename);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.file_save_dialog, null));
+        builder.create().show();
+    }
+
+    public void onClickOpenFileManager(View view) {
+        String home = fileControl.getHomePath();
+        Intent intent = new Intent(OI_ACTION_PICK_DIRECTORY);
+        intent.setData(Uri.parse("file://" + home));
+        intent.putExtra(OI_EXTRA_TITLE, getString(R.string.oi_pick_directory_title));
+        intent.putExtra(OI_EXTRA_BUTTON_TEXT, getString(R.string.oi_pick_directory_button));
+        try {
+            startActivityForResult(intent, REQUEST_OI_ACTION_PICK_DIRECTORY);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.oi_no_filemanager_installed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode < 0) {
+        if (resultCode != RESULT_OK || data == null) {
             return;
         }
         switch (requestCode) {
-        case ACTIVITY_FILE_CHOOSER:
-            onFileChooserResult(data);
+        case REQUEST_OI_ACTION_PICK_FILE:
+            onOiActionPickFile(data);
             break;
-        case ACTIVITY_FILE_SAVER:
-            onFileSaverResult(data);
+        case REQUEST_OI_ACTION_PICK_DIRECTORY:
+            onOiActionPickDirectory(data);
             break;
         }
     }
 
-    private void onFileChooserResult(Intent data) {
-        String path = data.getStringExtra(FileChooser.RESULT_PATH);
-        if (path.isEmpty()) {
+    private void onOiActionPickFile(Intent data) {
+        String path = data.getDataString();
+        if (path == null || path.isEmpty()) {
             return;
         }
-        openFile(new File(path));
+        if (path.startsWith("file://")) {
+            path = path.substring(7);
+        }
+        pickedDirectory = new File(path);
     }
 
-    private void openFile(File file) {
-        String text = fileControl.readFile(file);
-        if (text == null) {
-            String msg = fileControl.getErrorMessage();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    private void onOiActionPickDirectory(Intent data) {
+        String dir = data.getDataString();
+        if (dir == null || dir.isEmpty()) {
             return;
         }
-        editControl.setText(getEdit(), text);
-        setTitle();
+        if (dir.startsWith("file://")) {
+            dir = dir.substring(7);
+        }
+        pickedDirectory = new File(dir);
     }
 
-    private void onFileSaverResult(Intent data) {
-        String path = data.getStringExtra(FileChooser.RESULT_PATH);
-        if (path.isEmpty()) {
-            return;
-        }
-        saveFile(new File(path));
+    private void onFileSaveDialogOk(String filename) {
+        File file = new File(pickedDirectory, filename);
+        saveFile(file);
     }
 
     private void saveFile(File file) {

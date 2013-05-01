@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">WagtailED</string>
-    <string name="cancel">Cancel</string><string name="menu_item_file">File</string>
+    <string name="cancel">Cancel</string>
+    <string name="menu_item_file">File</string>
     <string name="menu_item_new">New</string>
     <string name="menu_item_open">Open&#8230;</string>
     <string name="menu_item_save">Save</string>
@@ -16,5 +17,12 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="replace_message">Do you want to replace it?</string>
+
+    <string name="file_manager_desc">Open with an external file manager.</string>
+    <string name="oi_open_button">Open</string>
+    <string name="oi_open_title">Select file to open</string>
+    <string name="oi_pick_directory_button">Use this folder</string>
+    <string name="oi_pick_directory_title">Select a folder</string>
+    <string name="oi_no_filemanager_installed">No compatible file manager found</string>
 
 </resources>

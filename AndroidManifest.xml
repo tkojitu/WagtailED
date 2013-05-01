@@ -23,8 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FileChooser" />
-        <activity android:name=".FileSaver" />
     </application>
 
 </manifest>
