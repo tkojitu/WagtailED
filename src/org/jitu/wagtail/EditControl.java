@@ -19,7 +19,10 @@ public class EditControl {
         clipper.paste(context, edit);
     }
 
-    public void addTextWatcher(EditText edit) {
+    public void addTextWatchers(EditText edit) {
+        IndentMan man = new IndentMan();
+        edit.addTextChangedListener(man);
+        edit.setKeyListener(man);
         edit.addTextChangedListener(historian);
     }
 

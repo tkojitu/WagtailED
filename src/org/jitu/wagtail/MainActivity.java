@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        editControl.addTextWatcher(getEdit());
+        editControl.addTextWatchers(getEdit());
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
