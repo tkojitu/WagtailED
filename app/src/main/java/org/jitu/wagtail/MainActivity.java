@@ -1,6 +1,9 @@
 package org.jitu.wagtail;
 
 import java.io.File;
+
+import org.jitu.wagtail.R;
+
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
