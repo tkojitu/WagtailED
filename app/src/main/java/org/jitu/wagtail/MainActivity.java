@@ -1,18 +1,14 @@
 package org.jitu.wagtail;
 
-import java.io.File;
-
-import org.jitu.wagtail.R;
-
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class MainActivity extends Activity {
     public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
@@ -214,7 +212,18 @@ public class MainActivity extends Activity {
         if (path.startsWith("file://")) {
             path = path.substring(7);
         }
-        pickedDirectory = new File(path);
+        openFile(new File(path));
+    }
+
+    private void openFile(File file) {
+        String text = fileControl.readFile(file);
+        if (text == null) {
+            String msg = fileControl.getErrorMessage();
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            return;
+        }
+        editControl.setText(getEdit(), text);
+        setTitle();
     }
 
     private void onOiActionPickDirectory(Intent data) {

@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public abstract class ClipboardControl {
     public static ClipboardControl newInstance() {
-        if (Build.VERSION.SDK_INT > 10) {
+        if (Build.VERSION.SDK_INT > 11) {
             return new ClipboardControlApi11();
         } else {
             return new ClipboardControlApi1();
