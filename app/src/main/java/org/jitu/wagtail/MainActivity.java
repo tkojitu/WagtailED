@@ -9,17 +9,24 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.File;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements
+        GestureDetector.OnGestureListener, View.OnTouchListener {
     public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
     public static final String OI_EXTRA_TITLE = "org.openintents.extra.TITLE";
     public static final String OI_ACTION_PICK_DIRECTORY = "org.openintents.action.PICK_DIRECTORY";
@@ -30,14 +37,17 @@ public class MainActivity extends Activity {
 
     private FileControl fileControl = new FileControl();
     private EditControl editControl = new EditControl();
-
     private File pickedDirectory = new File(fileControl.getHomePath());
+    private GestureDetectorCompat detector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editControl.addTextWatchers(getEdit());
+        findViewById(R.id.gestureOverlayView).setVisibility(View.INVISIBLE);
+        detector = new GestureDetectorCompat(this, this);
+        findViewById(R.id.gestureOverlayView).setOnTouchListener(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
@@ -297,5 +307,75 @@ public class MainActivity extends Activity {
         fileControl.onRestoreInstanceState(savedInstanceState);
         setTitle();
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    public void onGestureClicked(View view) {
+        ToggleButton button = (ToggleButton) view;
+        if (button.isChecked()) {
+            showGestureView();
+        } else {
+            hideGestureView();
+        }
+    }
+
+    private void showGestureView() {
+        findViewById(R.id.gestureOverlayView).setVisibility(View.VISIBLE);
+    }
+
+    private void hideGestureView() {
+        findViewById(R.id.gestureOverlayView).setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        float y = e1.getAxisValue(MotionEvent.AXIS_Y);
+        if (y < getScroller().getHeight() / 2) {
+            moveCursorHome();
+        } else {
+            moveCursorEnd();
+        }
+        return false;
+    }
+
+    private void moveCursorHome() {
+        editControl.moveCursorHome(getEdit());
+        getScroller().fullScroll(View.FOCUS_UP);
+    }
+
+    private void moveCursorEnd() {
+        editControl.moveCursorEnd(getEdit());
+        getScroller().fullScroll(View.FOCUS_DOWN);
+    }
+
+    private ScrollView getScroller() {
+        return (ScrollView) findViewById(R.id.scroller);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return detector.onTouchEvent(event);
     }
 }

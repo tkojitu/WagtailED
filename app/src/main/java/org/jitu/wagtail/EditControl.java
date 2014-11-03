@@ -46,4 +46,12 @@ public class EditControl {
     public String getText(EditText edit) {
         return edit.getText().toString();
     }
+
+    public void moveCursorHome(EditText edit) {
+        edit.setSelection(0);
+    }
+
+    public void moveCursorEnd(EditText edit) {
+        edit.setSelection(edit.getText().length());
+    }
 }

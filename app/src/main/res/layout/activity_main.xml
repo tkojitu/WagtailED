@@ -8,11 +8,11 @@
         android:id="@+id/scroller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:fillViewport="true" >
+        android:fillViewport="true"
+        android:layout_above="@+id/gestureButton"
+        android:layout_alignParentRight="true">
 
         <EditText
             android:id="@+id/edit"
@@ -27,5 +27,24 @@
         </EditText>
 
     </ScrollView>
+
+    <android.gesture.GestureOverlayView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gestureOverlayView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/gestureButton"
+        android:layout_alignParentRight="true">
+    </android.gesture.GestureOverlayView>
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New ToggleButton"
+        android:id="@+id/gestureButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="onGestureClicked"/>
 
 </RelativeLayout>
