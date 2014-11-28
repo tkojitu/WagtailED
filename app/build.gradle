@@ -8,6 +8,11 @@ android {
         minSdkVersion 15
         targetSdkVersion 19
     }
+
+    dependencies {
+        compile 'com.android.support:support-v4:19.0.0'
+    }
+
     buildTypes {
         release {
             runProguard false
@@ -16,8 +21,4 @@ android {
     }
     productFlavors {
     }
-}
-
-dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
 }
