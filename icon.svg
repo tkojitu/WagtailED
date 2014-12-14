@@ -1,0 +1,10 @@
+<svg width="512" height="512" stroke="gray" stroke-width="1" fill="white">
+<rect x="0" y="0" width="512" height="512"></rect>
+<g transform="translate(256,256)">
+    <path d="M240,0A240,240 0 0,0 -240,-2.939152317953648e-14L0,0Z" stroke="black" fill="black"></path>
+    <path d="M240,0A240,240 0 0,1 -240,2.939152317953648e-14L0,0Z" stroke="gray" fill="white"></path>
+</g>
+<text x="210" y="425" font-family="Crimson Text" font-size="192px" fill="black">
+E
+</text>
+</svg>
