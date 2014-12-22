@@ -1,5 +1,6 @@
 package org.jitu.wagtail;
 
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
@@ -14,7 +15,7 @@ public class IndentMan extends TextKeyListener implements TextWatcher {
         super(TextKeyListener.Capitalize.NONE, false);
     }
 
-    public boolean onKeyDown(View view, Editable content, int keyCode, KeyEvent event) {
+    public boolean onKeyDown(View view, Editable content, int keyCode, @NonNull KeyEvent event) {
         enterDown = (keyCode == KeyEvent.KEYCODE_ENTER);
         return super.onKeyDown(view, content, keyCode, event);
     }

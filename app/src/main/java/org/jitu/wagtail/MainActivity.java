@@ -6,11 +6,12 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.gesture.GestureOverlayView;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,10 +46,18 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editControl.addTextWatchers(getEdit());
-        findViewById(R.id.gestureOverlayView).setVisibility(View.INVISIBLE);
-        detector = new GestureDetectorCompat(this, this);
-        findViewById(R.id.gestureOverlayView).setOnTouchListener(this);
+        initGesture();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    private void initGesture() {
+        detector = new GestureDetectorCompat(this, this);
+        getGestureView().setVisibility(View.INVISIBLE);
+        getGestureView().setOnTouchListener(this);
+    }
+
+    private GestureOverlayView getGestureView() {
+        return (GestureOverlayView) findViewById(R.id.gestureView);
     }
 
     @Override
@@ -272,7 +281,7 @@ public class MainActivity extends Activity implements
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -297,13 +306,13 @@ public class MainActivity extends Activity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         fileControl.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         fileControl.onRestoreInstanceState(savedInstanceState);
         setTitle();
         super.onRestoreInstanceState(savedInstanceState);
@@ -319,11 +328,11 @@ public class MainActivity extends Activity implements
     }
 
     private void showGestureView() {
-        findViewById(R.id.gestureOverlayView).setVisibility(View.VISIBLE);
+        getGestureView().setVisibility(View.VISIBLE);
     }
 
     private void hideGestureView() {
-        findViewById(R.id.gestureOverlayView).setVisibility(View.INVISIBLE);
+        getGestureView().setVisibility(View.INVISIBLE);
     }
 
     @Override
