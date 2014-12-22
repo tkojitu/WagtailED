@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 15
-    buildToolsVersion "20.0.0"
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "org.jitu.wagtail"
         minSdkVersion 15
@@ -15,10 +14,13 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
     productFlavors {
     }
+}
+
+dependencies {
 }
