@@ -2,6 +2,7 @@ package org.jitu.wagtail;
 
 import android.support.annotation.NonNull;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
 import android.view.KeyEvent;
@@ -57,5 +58,33 @@ public class IndentMan extends TextKeyListener implements TextWatcher {
             ++n;
         }
         return buf.toString();
+    }
+
+    public void tabify(Editable s) {
+        int bos = findBeginningOfLine(s);
+        s.insert(bos, "  ");
+    }
+
+    private int findBeginningOfLine(Editable s) {
+        int pos = Selection.getSelectionStart(s);
+        if (pos == 0) {
+            return 0;
+        }
+        for (; pos > 0; --pos) {
+            if (s.charAt(pos - 1) == '\n') {
+                return pos;
+            }
+        }
+        return 0;
+    }
+
+    public void untabify(Editable s) {
+        int bos = findBeginningOfLine(s);
+        if (s.charAt(bos) == ' ') {
+            s.delete(bos, bos + 1);
+        }
+        if (s.charAt(bos) == ' ') {
+            s.delete(bos, bos + 1);
+        }
     }
 }

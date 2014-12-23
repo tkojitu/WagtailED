@@ -6,6 +6,7 @@ import android.widget.EditText;
 public class EditControl {
     private EditHistorian historian = new EditHistorian();
     private ClipboardControl clipper = ClipboardControl.newInstance();
+    private IndentMan man = new IndentMan();
 
     public void copy(Context context, EditText edit) {
         clipper.copy(context, edit);
@@ -20,7 +21,6 @@ public class EditControl {
     }
 
     public void addTextWatchers(EditText edit) {
-        IndentMan man = new IndentMan();
         edit.addTextChangedListener(man);
         edit.setKeyListener(man);
         edit.addTextChangedListener(historian);
@@ -53,5 +53,13 @@ public class EditControl {
 
     public void moveCursorEnd(EditText edit) {
         edit.setSelection(edit.getText().length());
+    }
+
+    public void tabify(EditText edit) {
+        man.tabify(edit.getEditableText());
+    }
+
+    public void untabify(EditText edit) {
+        man.untabify(edit.getEditableText());
     }
 }

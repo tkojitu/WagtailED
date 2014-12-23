@@ -49,6 +49,10 @@ public class GestureControl implements GestureOverlayView.OnGesturePerformedList
             activity.moveCursorHome();
         } else if ("down".equals(name)) {
             activity.moveCursorEnd();
+        } else if ("L2R".equals(name)) {
+            activity.tabify();
+        } else if ("R2L".equals(name)) {
+            activity.untabify();
         }
     }
 }

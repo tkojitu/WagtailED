@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
         editControl.addTextWatchers(getEdit());
         gestureControl.onCreate();
         getGestureView().addOnGesturePerformedListener(gestureControl);
+        hideGestureView();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
@@ -338,5 +339,13 @@ public class MainActivity extends Activity {
 
     private ScrollView getScroller() {
         return (ScrollView) findViewById(R.id.scroller);
+    }
+
+    public void tabify() {
+        editControl.tabify(getEdit());
+    }
+
+    public void untabify() {
+        editControl.untabify(getEdit());
     }
 }
