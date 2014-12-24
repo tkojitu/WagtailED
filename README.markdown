@@ -7,12 +7,12 @@ Gestures
 --------
 The toggle button turns on Gesture Mode.
 
-| Gesture             | Description           |
-| ------------------- | --------------------- |
-| Λ                  | Beginning of document |
-| V                   | End of document       |
-| fling left to right | tabify a line         |
-| fling right to left | untabify a line       |
+| Gesture             | Description             |
+| ------------------- | ----------------------- |
+| Λ                  | Beginning of document   |
+| V                   | End of document         |
+| fling left to right | tabify selected lines   |
+| fling right to left | untabify selected lines |
 
 Licence
 -------
