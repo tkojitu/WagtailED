@@ -12,6 +12,7 @@ import android.view.View;
 public class IndentMan extends TextKeyListener implements TextWatcher {
     private boolean enterDown = false;
     private int index = -1;
+    private String whites = "  ";
 
     public IndentMan() {
         super(TextKeyListener.Capitalize.NONE, false);
@@ -69,7 +70,7 @@ public class IndentMan extends TextKeyListener implements TextWatcher {
             Selection.setSelection(s, ed);
             for (;;) {
                 int pos = moveBeginningOfLine(s);
-                s.insert(pos, "  ");
+                s.insert(pos, whites);
                 pos = moveBeginningOfLine(s);
                 int mark = s.getSpanStart(this);
                 if (pos <= mark) {
@@ -126,12 +127,33 @@ public class IndentMan extends TextKeyListener implements TextWatcher {
     }
 
     public void untabify(Editable s) {
-        int bos = findBeginningOfLine(s);
-        if (s.charAt(bos) == ' ') {
-            s.delete(bos, bos + 1);
-        }
-        if (s.charAt(bos) == ' ') {
-            s.delete(bos, bos + 1);
+        int st = Selection.getSelectionStart(s);
+        int ed = Selection.getSelectionEnd(s);
+        s.setSpan(this, st, ed, Spanned.SPAN_MARK_POINT);
+        try {
+            Selection.setSelection(s, ed);
+            for (;;) {
+                int pos = moveBeginningOfLine(s);
+                for (int i = 0; i < whites.length(); ++i) {
+                    if (s.length() == 0 || s.charAt(pos) != ' ') {
+                        break;
+                    }
+                    s.delete(pos, pos + 1);
+                }
+                pos = moveBeginningOfLine(s);
+                int mark = s.getSpanStart(this);
+                if (pos <= mark) {
+                    break;
+                }
+                if (pos == backwardChar(s)) {
+                    break;
+                }
+            }
+            st = s.getSpanStart(this);
+            ed = s.getSpanEnd(this);
+            Selection.setSelection(s, st, ed);
+        } finally {
+            s.removeSpan(this);
         }
     }
 }
