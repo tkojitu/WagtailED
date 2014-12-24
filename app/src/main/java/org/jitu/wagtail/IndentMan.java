@@ -88,19 +88,6 @@ public class IndentMan extends TextKeyListener implements TextWatcher {
         }
     }
 
-    private int findBeginningOfLine(Editable s) {
-        int pos = Selection.getSelectionStart(s);
-        if (pos == 0) {
-            return 0;
-        }
-        for (; pos > 0; --pos) {
-            if (s.charAt(pos - 1) == '\n') {
-                return pos;
-            }
-        }
-        return 0;
-    }
-
     private int moveBeginningOfLine(Editable s) {
         int pos = Selection.getSelectionStart(s);
         if (pos == 0) {
