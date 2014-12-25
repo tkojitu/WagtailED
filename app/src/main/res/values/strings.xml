@@ -25,4 +25,9 @@
     <string name="oi_pick_directory_title">Select a folder</string>
     <string name="oi_no_filemanager_installed">No compatible file manager found</string>
 
+    <string name="arrow_left">&#8592;</string>
+    <string name="arrow_up">&#8593;</string>
+    <string name="arrow_right">&#8594;</string>
+    <string name="arrow_down">&#8595;</string>
+
 </resources>

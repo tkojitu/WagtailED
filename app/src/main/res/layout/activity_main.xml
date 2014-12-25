@@ -39,12 +39,56 @@
     </android.gesture.GestureOverlayView>
 
     <ToggleButton
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/gestureButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:onClick="onGestureClicked"/>
+        android:onClick="onGestureClicked"
+        android:textOn="G"
+        android:textOff="G"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_left"
+        android:id="@+id/button_left"
+        android:layout_below="@+id/scroller"
+        android:layout_toRightOf="@+id/gestureButton"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_down"
+        android:id="@+id/button_down"
+        android:layout_below="@+id/scroller"
+        android:layout_toRightOf="@+id/button_left"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_up"
+        android:id="@+id/button_up"
+        android:layout_below="@+id/scroller"
+        android:layout_toRightOf="@+id/button_down"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arrow_right"
+        android:id="@+id/button_right"
+        android:layout_below="@+id/scroller"
+        android:layout_toRightOf="@+id/button_up"
+        />
 
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package org.jitu.wagtail;
 
 import android.content.Context;
+import android.text.Selection;
+import android.util.Log;
 import android.widget.EditText;
 
 public class EditControl {
@@ -61,5 +63,21 @@ public class EditControl {
 
     public void untabify(EditText edit) {
         man.untabify(edit.getEditableText());
+    }
+
+    public void handleArrowDown(EditText edit) {
+        Selection.extendDown(edit.getText(), edit.getLayout());
+    }
+
+    public void handleArrowLeft(EditText edit) {
+        Selection.extendLeft(edit.getText(), edit.getLayout());
+    }
+
+    public void handleArrowRight(EditText edit) {
+        Selection.extendRight(edit.getText(), edit.getLayout());
+    }
+
+    public void handleArrowUp(EditText edit) {
+        Selection.extendUp(edit.getText(), edit.getLayout());
     }
 }

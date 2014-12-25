@@ -23,7 +23,7 @@ import android.widget.ToggleButton;
 
 import java.io.File;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
     public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
     public static final String OI_EXTRA_TITLE = "org.openintents.extra.TITLE";
     public static final String OI_ACTION_PICK_DIRECTORY = "org.openintents.action.PICK_DIRECTORY";
@@ -42,14 +42,26 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editControl.addTextWatchers(getEdit());
+        setupGestures();
+        setupArrows();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    private void setupGestures() {
         gestureControl.onCreate();
         getGestureView().addOnGesturePerformedListener(gestureControl);
         hideGestureView();
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     private GestureOverlayView getGestureView() {
         return (GestureOverlayView) findViewById(R.id.gestureView);
+    }
+
+    private void setupArrows() {
+        findViewById(R.id.button_down).setOnClickListener(this);
+        findViewById(R.id.button_left).setOnClickListener(this);
+        findViewById(R.id.button_right).setOnClickListener(this);
+        findViewById(R.id.button_up).setOnClickListener(this);
     }
 
     @Override
@@ -313,8 +325,12 @@ public class MainActivity extends Activity {
     public void onGestureClicked(View view) {
         ToggleButton button = (ToggleButton) view;
         if (button.isChecked()) {
+            int color = getResources().getColor(R.color.deepskyblue);
+            button.setTextColor(color);
             showGestureView();
         } else {
+            int color = getResources().getColor(R.color.black);
+            button.setTextColor(color);
             hideGestureView();
         }
     }
@@ -347,5 +363,23 @@ public class MainActivity extends Activity {
 
     public void untabify() {
         editControl.untabify(getEdit());
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+        case R.id.button_down:
+            editControl.handleArrowDown(getEdit());
+            break;
+        case R.id.button_left:
+            editControl.handleArrowLeft(getEdit());
+            break;
+        case R.id.button_right:
+            editControl.handleArrowRight(getEdit());
+            break;
+        case R.id.button_up:
+            editControl.handleArrowUp(getEdit());
+            break;
+        }
     }
 }
