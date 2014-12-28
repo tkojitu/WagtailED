@@ -45,6 +45,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setupGestures();
         setupArrows();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        handleIntent();
     }
 
     private void setupGestures() {
@@ -55,6 +56,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private GestureOverlayView getGestureView() {
         return (GestureOverlayView) findViewById(R.id.gestureView);
+    }
+
+    private void handleIntent() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+        if (Intent.ACTION_EDIT.equals(action) || Intent.ACTION_VIEW.equals(action)) {
+            Uri uri = intent.getData();
+            File file = new File(uri.getPath());
+            openFile(file);
+        }
     }
 
     private void setupArrows() {
