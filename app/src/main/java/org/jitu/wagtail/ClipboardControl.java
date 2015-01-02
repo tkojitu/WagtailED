@@ -32,6 +32,11 @@ public abstract class ClipboardControl {
         CharSequence seq = edit.getText();
         int st = edit.getSelectionStart();
         int ed = edit.getSelectionEnd();
+        if (st > ed) {
+            int tmp = st;
+            st = ed;
+            ed = tmp;
+        }
         return seq.subSequence(st, ed);
     }
 
@@ -40,6 +45,10 @@ public abstract class ClipboardControl {
         int ed = edit.getSelectionEnd();
         if (st == ed) {
             return;
+        } else if (st > ed) {
+            int tmp = st;
+            st = ed;
+            ed = tmp;
         }
         Editable editable = edit.getEditableText();
         editable.delete(st, ed);
