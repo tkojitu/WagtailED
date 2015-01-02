@@ -15,7 +15,6 @@
         android:src="@drawable/ic_launcher_folder_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onClickOpenFileManager"
         android:contentDescription="@string/file_manager_desc" />
 
 </LinearLayout>
