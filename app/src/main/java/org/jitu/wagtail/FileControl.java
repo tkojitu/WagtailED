@@ -1,34 +1,41 @@
 package org.jitu.wagtail;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.widget.Toast;
 
 import org.apache.http.util.CharArrayBuffer;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.os.Environment;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 public class FileControl {
-    private static final String CURRENT_FILE = "CURRENT_FILE";
+    private static final String CURRENT_URI = "CURRENT_URI";
 
-    private File currentFile;
+    private MainActivity activity;
+    private Uri currentUri;
     private Exception error;
 
-    public String readFile(File file) {
+    public FileControl(MainActivity activity) {
+        this.activity = activity;
+    }
+
+    public String readUri(Uri uri) {
+        if (uri == null) {
+            return "";
+        }
+        InputStream is = null;
         try {
-            URL url = file.toURI().toURL();
-            URLConnection conn = url.openConnection();
-            InputStream is = conn.getInputStream();
+            ContentResolver cr = activity.getContentResolver();
+            is = cr.openInputStream(uri);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             int nread;
@@ -37,32 +44,33 @@ public class FileControl {
             while ((nread = br.read(chunk, 0, chunk.length)) != -1) {
                 buf.append(chunk, 0, nread);
             }
-            br.close();
-            currentFile = file;
+            currentUri = uri;
             return buf.toString();
         } catch (IOException e) {
             error = e;
-            currentFile = null;
             return null;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 
-    public File getCurrentFile() {
-        return currentFile;
+    public Uri getCurrentUri() {
+        return currentUri;
     }
 
     public String getCurrentFileName() {
-        if (currentFile == null) {
+        if (currentUri == null) {
             return "";
         }
-        return currentFile.getName();
-    }
-
-    public String getAbsolutePath() {
-        if (currentFile == null) {
-            return getHomePath() + File.separator + getDefaultName();
-        }
-        return currentFile.getAbsolutePath();
+        String str = currentUri.getPath();
+        int index = str.lastIndexOf('/');
+        return str.substring(index + 1);
     }
 
     public String getHomePath() {
@@ -75,29 +83,35 @@ public class FileControl {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private String getDefaultName() {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        String name = fmt.format(new Date());
-        return name + ".txt";
-    }
-
-    public boolean saveFile(File file, String text) {
+    public boolean saveUri(Uri uri, String text) {
+        if (uri == null) {
+            return true;
+        }
+        BufferedWriter writer = null;
         try {
-            FileWriter wf = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(wf);
-            bw.write(text, 0, text.length());
-            bw.close();
-            currentFile = file;
+            ContentResolver cr = activity.getContentResolver();
+            OutputStream os = cr.openOutputStream(uri);
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            writer = new BufferedWriter(osw);
+            writer.write(text);
+            currentUri = uri;
             return true;
         } catch (IOException e) {
             error = e;
             return false;
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 
     public void newFile() {
-        currentFile = null;
+        currentUri = null;
     }
 
     public String getErrorMessage() {
@@ -108,13 +122,16 @@ public class FileControl {
     }
 
     public void onSaveInstanceState(Bundle outState) {
-        if (currentFile == null) {
+        if (currentUri == null) {
             return;
         }
-        outState.putSerializable(CURRENT_FILE, currentFile);
+        outState.putSerializable(CURRENT_URI, currentUri.toString());
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        currentFile = (File) savedInstanceState.getSerializable(CURRENT_FILE);
+        String str = (String) savedInstanceState.getSerializable(CURRENT_URI);
+        if (str != null) {
+            currentUri = Uri.parse(str);
+        }
     }
 }

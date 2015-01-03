@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -25,11 +26,26 @@ public class MenuFileMan implements View.OnClickListener {
     public static final int REQUEST_OI_ACTION_PICK_DIRECTORY = 12;
 
     private MainActivity activity;
+    private FileControl fileControl;
     private File pickedDirectory;
 
     public MenuFileMan(MainActivity activity) {
         this.activity = activity;
-        pickedDirectory = new File(activity.getHomePath());
+        fileControl = new FileControl(activity);
+        pickedDirectory = new File(fileControl.getHomePath());
+    }
+
+    public boolean saveUri(Uri uri, String text) {
+        return fileControl.saveUri(uri, text);
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        fileControl.onSaveInstanceState(outState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        fileControl.onRestoreInstanceState(savedInstanceState);
+        setAppTitle();
     }
 
     public void showFileMenu() {
@@ -49,7 +65,7 @@ public class MenuFileMan implements View.OnClickListener {
         String[] items = r.getStringArray(R.array.file_menu_items);
         String item = items[which];
         if (r.getString(R.string.menu_item_new).equals(item)) {
-            activity.onNew();
+            onNew();
         } else if (r.getString(R.string.menu_item_open).equals(item)) {
             onOpen();
         } else if (r.getString(R.string.menu_item_save).equals(item)) {
@@ -59,8 +75,14 @@ public class MenuFileMan implements View.OnClickListener {
         }
     }
 
+    private void onNew() {
+        fileControl.newFile();
+        activity.clearEditText();
+        setAppTitle();
+    }
+
     private void onOpen() {
-        String home = activity.getHomePath();
+        String home = fileControl.getHomePath();
         Intent intent = new Intent(OI_ACTION_PICK_FILE);
         intent.setData(Uri.parse("file://" + home));
         intent.putExtra(OI_EXTRA_TITLE, activity.getString(R.string.oi_open_title));
@@ -73,12 +95,12 @@ public class MenuFileMan implements View.OnClickListener {
     }
 
     public void onSave() {
-        File file = activity.getCurrentFile();
-        if (file == null) {
+        Uri uri = fileControl.getCurrentUri();
+        if (uri == null) {
             onSaveAs();
             return;
         }
-        activity.saveFile(file);
+        saveUri(uri);
     }
 
     private void onSaveAs() {
@@ -104,7 +126,8 @@ public class MenuFileMan implements View.OnClickListener {
 
     private void onFileSaveDialogOk(String filename) {
         File file = new File(pickedDirectory, filename);
-        activity.saveFile(file);
+        Uri uri = Uri.fromFile(file);
+        saveUri(uri);
     }
 
     @Override
@@ -115,7 +138,7 @@ public class MenuFileMan implements View.OnClickListener {
     }
 
     private void onClickOpenFileManager() {
-        String home = activity.getHomePath();
+        String home = fileControl.getHomePath();
         Intent intent = new Intent(OI_ACTION_PICK_DIRECTORY);
         intent.setData(Uri.parse("file://" + home));
         intent.putExtra(OI_EXTRA_TITLE, activity.getString(R.string.oi_pick_directory_title));
@@ -149,7 +172,42 @@ public class MenuFileMan implements View.OnClickListener {
         if (path.startsWith("file://")) {
             path = path.substring(7);
         }
-        activity.openFile(new File(path));
+        File file = new File(path);
+        Uri uri = Uri.fromFile(file);
+        openUri(uri);
+    }
+
+    public void openUri(Uri uri) {
+        String text = fileControl.readUri(uri);
+        if (text == null) {
+            String msg = fileControl.getErrorMessage();
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+            return;
+        }
+        activity.setEditText(text);
+        setAppTitle();
+    }
+
+    private void saveUri(Uri uri) {
+        String text = activity.getEditText();
+        if (!saveUri(uri, text)) {
+            String msg = fileControl.getErrorMessage();
+            Toast.makeText(activity, msg, Toast.LENGTH_LONG).show();
+        }
+        setAppTitle();
+    }
+
+    public void saveCurrentFile() {
+        saveUri(fileControl.getCurrentUri());
+    }
+
+    private void setAppTitle() {
+        String title = fileControl.getCurrentFileName();
+        if (title.isEmpty()) {
+            activity.setTitle(R.string.app_name);
+        } else {
+            activity.setTitle(title);
+        }
     }
 
     private void onOiActionPickDirectory(Intent data) {

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.gesture.GestureOverlayView;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
@@ -16,24 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.io.File;
-
 public class MainActivity extends Activity implements View.OnClickListener {
-    private FileControl fileControl = new FileControl();
     private EditControl editControl = new EditControl();
     private MenuFileMan menuFileMan = new MenuFileMan(this);
     private GestureControl gestureControl = new GestureControl(this);
-
-    public String getHomePath() {
-        return fileControl.getHomePath();
-    }
-
-    public File getCurrentFile() {
-        return fileControl.getCurrentFile();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_EDIT.equals(action) || Intent.ACTION_VIEW.equals(action)) {
-            Uri uri = intent.getData();
-            File file = new File(uri.getPath());
-            openFile(file);
+            menuFileMan.openUri(intent.getData());
         }
     }
 
@@ -122,23 +107,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void onNew() {
-        editControl.clear(getEdit());
-        fileControl.newFile();
-        setTitle();
-    }
-
-    private void setTitle() {
-        String title = fileControl.getCurrentFileName();
-        if (title.isEmpty()) {
-            setTitle(R.string.app_name);
-        } else {
-            setTitle(title);
-        }
-    }
-
     private EditText getEdit() {
         return (EditText) findViewById(R.id.edit);
+    }
+
+    public String getEditText() {
+        return editControl.getText(getEdit());
+    }
+
+    public void setEditText(String text) {
+        editControl.setText(getEdit(), text);
+    }
+
+    public void clearEditText() {
+        editControl.clear(getEdit());
     }
 
     @Override
@@ -146,34 +128,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         menuFileMan.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void openFile(File file) {
-        String text = fileControl.readFile(file);
-        if (text == null) {
-            String msg = fileControl.getErrorMessage();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-            return;
-        }
-        editControl.setText(getEdit(), text);
-        setTitle();
-    }
-
-    public void saveFile(File file) {
-        String text = editControl.getText(getEdit());
-        if (!fileControl.saveFile(file, text)) {
-            String msg = fileControl.getErrorMessage();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        }
-        setTitle();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
-        File file = fileControl.getCurrentFile();
-        if (file == null) {
-            return;
-        }
-        saveFile(file);
+        menuFileMan.saveCurrentFile();
     }
 
     @Override
@@ -189,28 +147,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void onVolumeDown() {
         menuFileMan.onSave();
-        showSavedFileName();
-    }
-
-    private void showSavedFileName() {
-        File file = fileControl.getCurrentFile();
-        if (file == null) {
-            return;
-        }
-        String msg = "Save " + file.getName();
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        fileControl.onSaveInstanceState(outState);
+        menuFileMan.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        fileControl.onRestoreInstanceState(savedInstanceState);
-        setTitle();
+        menuFileMan.onRestoreInstanceState(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
 
