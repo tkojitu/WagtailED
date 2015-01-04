@@ -7,9 +7,11 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -261,11 +263,27 @@ public class StorageDeed implements View.OnClickListener {
     }
 
     private void setAppTitle() {
-        String title = fileControl.getCurrentFileName();
-        if (title.isEmpty()) {
+        Uri uri = fileControl.getCurrentUri();
+        if (uri == null) {
             activity.setTitle(R.string.app_name);
-        } else {
-            activity.setTitle(title);
+            return;
+        }
+        String filename = queryFilename(uri);
+        activity.setTitle(filename);
+    }
+
+    private String queryFilename(Uri uri) {
+        Cursor cursor = activity.getContentResolver().query(uri, null, null, null, null);
+        if (cursor == null) {
+            return "";
+        }
+        try {
+            if (!cursor.moveToFirst()) {
+                return "";
+            }
+            return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+        } finally {
+            cursor.close();
         }
     }
 

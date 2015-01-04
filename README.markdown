@@ -14,6 +14,8 @@ The toggle button turns on Gesture Mode.
 | fling left to right | tabify selected lines   |
 | fling right to left | untabify selected lines |
 
+
+
 Licence
 -------
 
