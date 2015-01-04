@@ -26,6 +26,7 @@ public class StorageDeed implements View.OnClickListener {
     public static final int REQUEST_OI_ACTION_PICK_FILE = 11;
     public static final int REQUEST_OI_ACTION_PICK_DIRECTORY = 12;
     public static final int REQUEST_ACTION_OPEN_DOCUMENT = 13;
+    public static final int REQUEST_ACTION_CREATE_DOCUMENT = 14;
 
     private MainActivity activity;
     private FileControl fileControl;
@@ -121,6 +122,14 @@ public class StorageDeed implements View.OnClickListener {
     }
 
     private void onSaveAs() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            onSaveAsIceCreamSandwich();
+        } else {
+            onSaveAsKitKat();
+        }
+    }
+
+    private void onSaveAsIceCreamSandwich() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -167,6 +176,14 @@ public class StorageDeed implements View.OnClickListener {
         }
     }
 
+    private void onSaveAsKitKat() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/*");
+        // intent.putExtra(Intent.EXTRA_TITLE, fileName);
+        activity.startActivityForResult(intent, REQUEST_ACTION_CREATE_DOCUMENT);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK || data == null) {
             return;
@@ -180,6 +197,10 @@ public class StorageDeed implements View.OnClickListener {
             break;
         case REQUEST_ACTION_OPEN_DOCUMENT:
             onActionOpenDocument(data);
+            break;
+        case REQUEST_ACTION_CREATE_DOCUMENT:
+            onActionCreateDocument(data);
+            break;
         }
     }
 
@@ -242,5 +263,9 @@ public class StorageDeed implements View.OnClickListener {
 
     private void onActionOpenDocument(Intent data) {
         openUri(data.getData());
+    }
+
+    private void onActionCreateDocument(Intent data) {
+        saveUri(data.getData());
     }
 }
