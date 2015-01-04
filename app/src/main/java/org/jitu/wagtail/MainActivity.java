@@ -19,7 +19,7 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private EditControl editControl = new EditControl();
-    private MenuFileMan menuFileMan = new MenuFileMan(this);
+    private StorageDeed storageDeed = new StorageDeed(this);
     private GestureControl gestureControl = new GestureControl(this);
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_EDIT.equals(action) || Intent.ACTION_VIEW.equals(action)) {
-            menuFileMan.openUri(intent.getData());
+            storageDeed.openUri(intent.getData());
         }
     }
 
@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_file:
-            menuFileMan.showFileMenu();
+            storageDeed.showFileMenu();
             return true;
         case R.id.menu_edit:
             showEditMenu();
@@ -125,13 +125,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        menuFileMan.onActivityResult(requestCode, resultCode, data);
+        storageDeed.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        menuFileMan.saveCurrentFile();
+        storageDeed.saveCurrentFile();
     }
 
     @Override
@@ -146,18 +146,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void onVolumeDown() {
-        menuFileMan.onSave();
+        storageDeed.onSave();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        menuFileMan.onSaveInstanceState(outState);
+        storageDeed.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        menuFileMan.onRestoreInstanceState(savedInstanceState);
+        storageDeed.onRestoreInstanceState(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
     }
 

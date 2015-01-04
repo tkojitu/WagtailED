@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class MenuFileMan implements View.OnClickListener {
+public class StorageDeed implements View.OnClickListener {
     public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
     public static final String OI_EXTRA_TITLE = "org.openintents.extra.TITLE";
     public static final String OI_ACTION_PICK_DIRECTORY = "org.openintents.action.PICK_DIRECTORY";
@@ -29,7 +29,7 @@ public class MenuFileMan implements View.OnClickListener {
     private FileControl fileControl;
     private File pickedDirectory;
 
-    public MenuFileMan(MainActivity activity) {
+    public StorageDeed(MainActivity activity) {
         this.activity = activity;
         fileControl = new FileControl(activity);
         pickedDirectory = new File(fileControl.getHomePath());
