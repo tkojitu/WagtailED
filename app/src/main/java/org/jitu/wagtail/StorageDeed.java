@@ -1,5 +1,6 @@
 package org.jitu.wagtail;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -16,6 +17,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class StorageDeed implements View.OnClickListener {
     public static final String OI_EXTRA_BUTTON_TEXT = "org.openintents.extra.BUTTON_TEXT";
@@ -180,8 +183,24 @@ public class StorageDeed implements View.OnClickListener {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/*");
-        // intent.putExtra(Intent.EXTRA_TITLE, fileName);
+        intent.putExtra(Intent.EXTRA_TITLE, getDefaultName());
         activity.startActivityForResult(intent, REQUEST_ACTION_CREATE_DOCUMENT);
+    }
+
+    private String getDefaultName() {
+        String name = fileControl.getCurrentFileName();
+        if (name.isEmpty()) {
+            return getDefaultNameDate();
+        } else {
+            return name;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private String getDefaultNameDate() {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        String name = fmt.format(new Date());
+        return name + ".txt";
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
