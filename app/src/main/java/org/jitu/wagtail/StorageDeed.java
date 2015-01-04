@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class StorageDeed implements View.OnClickListener {
 
     public static final int REQUEST_OI_ACTION_PICK_FILE = 11;
     public static final int REQUEST_OI_ACTION_PICK_DIRECTORY = 12;
+    public static final int REQUEST_ACTION_OPEN_DOCUMENT = 13;
 
     private MainActivity activity;
     private FileControl fileControl;
@@ -82,6 +84,14 @@ public class StorageDeed implements View.OnClickListener {
     }
 
     private void onOpen() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            onOpenIceCreamSandwich();
+        } else {
+            onOpenKitKat();
+        }
+    }
+
+    private void onOpenIceCreamSandwich() {
         String home = fileControl.getHomePath();
         Intent intent = new Intent(OI_ACTION_PICK_FILE);
         intent.setData(Uri.parse("file://" + home));
@@ -92,6 +102,13 @@ public class StorageDeed implements View.OnClickListener {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, R.string.oi_no_filemanager_installed, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void onOpenKitKat() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/*");
+        activity.startActivityForResult(intent, REQUEST_ACTION_OPEN_DOCUMENT);
     }
 
     public void onSave() {
@@ -161,6 +178,8 @@ public class StorageDeed implements View.OnClickListener {
         case REQUEST_OI_ACTION_PICK_DIRECTORY:
             onOiActionPickDirectory(data);
             break;
+        case REQUEST_ACTION_OPEN_DOCUMENT:
+            onActionOpenDocument(data);
         }
     }
 
@@ -219,5 +238,9 @@ public class StorageDeed implements View.OnClickListener {
             dir = dir.substring(7);
         }
         pickedDirectory = new File(dir);
+    }
+
+    private void onActionOpenDocument(Intent data) {
+        openUri(data.getData());
     }
 }
