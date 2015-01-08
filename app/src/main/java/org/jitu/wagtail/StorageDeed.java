@@ -268,7 +268,12 @@ public class StorageDeed implements View.OnClickListener {
             activity.setTitle(R.string.app_name);
             return;
         }
-        String filename = queryFilename(uri);
+        String filename = "";
+        if ("content".equals(uri.getScheme())) {
+            filename = queryFilename(uri);
+        } else {
+            filename = new File(uri.getPath()).getName();
+        }
         activity.setTitle(filename);
     }
 

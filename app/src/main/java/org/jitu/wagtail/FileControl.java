@@ -11,6 +11,7 @@ import org.apache.http.util.CharArrayBuffer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,8 +35,7 @@ public class FileControl {
         }
         InputStream is = null;
         try {
-            ContentResolver cr = activity.getContentResolver();
-            is = cr.openInputStream(uri);
+            is = getInputStreamFromUri(uri);
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             int nread;
@@ -58,6 +58,14 @@ public class FileControl {
                 }
             }
         }
+    }
+
+    private InputStream getInputStreamFromUri(Uri uri) throws IOException {
+        if ("file".equals(uri.getScheme())) {
+            return new FileInputStream(uri.getPath());
+        }
+        ContentResolver cr = activity.getContentResolver();
+        return cr.openInputStream(uri);
     }
 
     public Uri getCurrentUri() {
